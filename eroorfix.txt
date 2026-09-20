@@ -1,0 +1,163 @@
+Ye latest fixed source ZIP hai. Isko base source maan kar kaam karo.
+
+GOAL:
+Login button press karne par APK mein:
+
+"Login failed:
+Preparing..."
+
+aa raha hai.
+
+Previous build mein JNI crash fix ho chuka hai, APK successfully build ho rahi hai, lekin legitimate login attempt par ab bhi ye message aa raha hai.
+
+IMPORTANT:
+- Existing UI, features, functionality aur project structure preserve karo.
+- Existing Tcore-release.aar preserve karo.
+- Existing authentication/token validation preserve karo.
+- Authentication bypass mat karo.
+- Token/signature/MD5 validation remove ya weaken mat karo.
+- Server response ko force karke success mat banao.
+- Fake/hardcoded successful login mat implement karo.
+- Sirf legitimate client-side bugs fix karo.
+
+STEP 1 — COMPLETE SOURCE INSPECTION
+
+Poore project ko inspect karo aur specifically search karo:
+
+1. Exact string:
+   "Preparing..."
+2. All occurrences of:
+   - "Login failed"
+   - "Check("
+   - "reason"
+   - "status"
+   - "token"
+   - "rng"
+3. Java/Kotlin login flow.
+4. Native C++ login flow.
+5. JNI bridge.
+6. Network request code.
+7. JSON parsing.
+8. Authentication/token validation.
+9. Tcore-release.aar integration.
+10. Manifest/network/security configuration.
+
+Report every location where "Preparing..." can originate.
+
+STEP 2 — ACTUAL LOGIN TEST
+
+Use an actual Android device/emulator.
+
+I have a legitimate login key. Do NOT put the key into source code, logs, screenshots, reports, or the final ZIP.
+
+Enter the key manually into the app and perform one real Login attempt.
+
+Capture sanitized diagnostics:
+
+- HTTP status
+- CURL/network result
+- CURL error message if any
+- endpoint reached
+- response Content-Type
+- sanitized server response
+- parsed status
+- parsed reason
+- whether token exists
+- whether rng exists
+- token validation result
+- final value returned by native Check()
+- final Java-side login result
+
+Never print the actual login key, token, serial, or other secrets.
+
+STEP 3 — FIND EXACT ROOT CAUSE
+
+Determine which one is happening:
+
+A. Server itself returns:
+   reason = "Preparing..."
+
+B. Native C++ changes/creates "Preparing..."
+
+C. Java/Kotlin creates "Preparing..."
+
+D. A resource/string/local fallback creates it.
+
+E. Network/TLS/JSON parsing causes a fallback response.
+
+F. Authentication response format changed and current parser is incompatible.
+
+G. Tcore/native library integration causes the login result to fail.
+
+Do not guess. Use source inspection + runtime logs to identify the exact path.
+
+STEP 4 — IF SERVER RETURNS "Preparing..."
+
+If the legitimate request receives a server response whose reason is "Preparing...":
+
+- Do NOT modify the client to treat it as success.
+- Do NOT bypass authentication.
+- Do NOT remove token validation.
+- Report the exact sanitized server response.
+- Explain that the backend is returning the failure reason.
+- Check whether the client is correctly displaying that server response.
+
+If the backend response indicates a legitimate configuration/registration problem that can be fixed in the client, explain that specifically. Otherwise leave the backend response intact.
+
+STEP 5 — IF CLIENT-SIDE BUG IS FOUND
+
+If the actual problem is in Java/C++/JNI/network/JSON parsing:
+
+- Fix the root cause.
+- Keep existing authentication security intact.
+- Do not remove existing features.
+- Rebuild.
+- Run the login test again.
+- Check Logcat for crashes/exceptions.
+
+STEP 6 — BUILD VERIFICATION
+
+Repeat:
+
+BUILD
+→ INSTALL
+→ LOGIN TEST
+→ LOGCAT
+→ ROOT CAUSE
+→ FIX
+→ REBUILD
+
+until either:
+
+1. legitimate login succeeds normally, OR
+2. definitive evidence proves the backend is rejecting/returning "Preparing..." and no client-side defect remains.
+
+Do not claim success without an actual runtime test.
+
+STEP 7 — FINAL DELIVERABLES
+
+After completion provide:
+
+1. Successfully built APK.
+2. Latest complete fixed source ZIP.
+3. Exact root cause.
+4. Exact files changed.
+5. Short explanation of each fix.
+6. Build result.
+7. Runtime login-test result.
+8. Sanitized server response if relevant.
+9. State clearly whether the final failure, if any, is client-side or backend-side.
+
+FINAL QUALITY CHECK:
+
+Before delivering the ZIP:
+- Verify the ZIP opens correctly.
+- Verify all modified source files are included.
+- Verify Tcore-release.aar is present.
+- Verify JNI package/method names match Java declarations.
+- Verify no important source files were accidentally removed.
+- Verify no login key/token/secret was accidentally written into the source or logs.
+
+
+ye raha login key 
+3DxPROXIMAxnd0mxuhj47pgl
